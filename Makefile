@@ -17,5 +17,5 @@ run: all
 buildrepo:
 	mkdir -p bin src
 
-$(BIN)/$(EXECUTABLE): $(SRC)/*
+$(BIN)/$(EXECUTABLE): $(SRC)/*.cpp
 	$(CC) $(C_FLAGS) $^ -o $@

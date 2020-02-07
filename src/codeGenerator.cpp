@@ -1,6 +1,9 @@
 #include "ast.h"
 #include <map>
 
+static int finallyCounter = 0;
+static int resetCounter = 0;
+
 std::string IntDeclaration::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	if(variables.find(this->variable->name) != variables.end())
@@ -39,6 +42,39 @@ std::string Assignment::generateCode(std::map<std::string, int>& variables, int&
 
 	command += this->next->generateCode(variables, s);
 
+	return command;
+}
+
+std::string If::generateCode(std::map<std::string, int>& variables, int& s)
+{
+	std::string command;
+
+	command += expression->generateCode(variables, s);
+	command += "lw $v0 4($sp)\n";
+	command += "breq $v0 $zero finally" + std::to_string(finallyCounter) + "\n";
+	command += body->generateCode(variables, s);
+	command += "finally" + std::to_string(finallyCounter) + ":\n";
+	command += next->generateCode(variables, s);
+
+	finallyCounter++;
+	return command;
+}
+
+std::string While::generateCode(std::map<std::string, int>& variables, int& s)
+{
+	std::string command;
+
+	command += "reset" + std::to_string(resetCounter) + ":\n";
+	command += expression->generateCode(variables, s);
+	command += "lw $v0 4($sp)\n";
+	command += "breq $v0 $zero finally" + std::to_string(finallyCounter) + "\n";
+	command += body->generateCode(variables, s);
+	command += "j reset" + std::to_string(resetCounter) + "\n";
+	command += "finally" + std::to_string(finallyCounter) + ":\n";
+	command += next->generateCode(variables, s);
+
+	finallyCounter++;
+	resetCounter++;
 	return command;
 }
 

@@ -219,6 +219,8 @@ public:
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
+
 	std::string printDebug(int depth) const;
 };
 
@@ -230,6 +232,8 @@ public:
 	Statement* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
 
 	std::string printDebug(int depth) const;
 };

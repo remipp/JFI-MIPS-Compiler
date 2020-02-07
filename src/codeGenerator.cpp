@@ -1,7 +1,7 @@
 #include "ast.h"
 #include <map>
 
-std::string IntDeclaration::generateCode(std::map<std::string, int> variables, int s)
+std::string IntDeclaration::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	if(variables.find(this->variable->name) != variables.end())
 	{
@@ -20,7 +20,7 @@ std::string IntDeclaration::generateCode(std::map<std::string, int> variables, i
 	return command;
 }
 
-std::string Assignment::generateCode(std::map<std::string, int> variables, int s)
+std::string Assignment::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	if(variables.find(this->variable->name) == variables.end())
 	{
@@ -42,7 +42,7 @@ std::string Assignment::generateCode(std::map<std::string, int> variables, int s
 	return command;
 }
 
-std::string Expression::generateCode(std::map<std::string, int> variables, int s)
+std::string Expression::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	std::string command = this->next->generateCode(variables, s);
 
@@ -60,7 +60,7 @@ std::string Expression::generateCode(std::map<std::string, int> variables, int s
 	return command;
 }
 
-std::string Expression2::generateCode(std::map<std::string, int> variables, int s)
+std::string Expression2::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	std::string command = this->next->generateCode(variables, s);
 
@@ -78,7 +78,7 @@ std::string Expression2::generateCode(std::map<std::string, int> variables, int 
 	return command;
 }
 
-std::string Expression3::generateCode(std::map<std::string, int> variables, int s)
+std::string Expression3::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	std::string command = this->next->generateCode(variables, s);
 
@@ -93,14 +93,14 @@ std::string Expression3::generateCode(std::map<std::string, int> variables, int 
 	return command;
 }
 
-std::string Expression4::generateCode(std::map<std::string, int> variables, int s)
+std::string Expression4::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	std::string command = this->next->generateCode(variables, s);
 
 	return command;
 }
 
-std::string Number::generateCode(std::map<std::string, int> variables, int s)
+std::string Number::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	std::string command = "li $v0 " + std::to_string(this->value) + "\n";
 	command += "sw $v0 ($sp)\n";
@@ -111,14 +111,14 @@ std::string Number::generateCode(std::map<std::string, int> variables, int s)
 	return command;
 }
 
-std::string Epsilon::generateCode(std::map<std::string, int> variables, int s){
+std::string Epsilon::generateCode(std::map<std::string, int>& variables, int& s){
 	return "";
 }
 
-std::string Node::generateCode(std::map<std::string, int> variables, int s){
+std::string Node::generateCode(std::map<std::string, int>& variables, int& s){
 	return "";
 }
 
-std::string Statement::generateCode(std::map<std::string, int> variables, int s){
+std::string Statement::generateCode(std::map<std::string, int>& variables, int& s){
 	return "";
 }

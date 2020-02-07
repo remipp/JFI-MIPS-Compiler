@@ -258,3 +258,13 @@ class Exit : public Statement
 	std::string printDebug(int depth) const;
 	std::string generateCode(std::map<std::string, int>& variables, int& s);
 };
+
+class Exit : public Statement
+{
+	Statement* next;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
+};

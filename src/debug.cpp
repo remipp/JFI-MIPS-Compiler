@@ -6,7 +6,7 @@ std::string Node::printDebug(int depth) const
 {
 	std::string ret;
 	ret.resize(depth, ' ');
-	ret += "Node {}";
+	ret += "node {}";
 	return ret;
 }
 
@@ -14,7 +14,7 @@ std::string Variable::printDebug(int depth) const
 {
 	std::string ret;
 	ret.resize(depth, ' ');
-	ret += "Variable {" + name + "}\n";
+	ret += "variable {" + name + "}\n";
 	return ret;
 }
 
@@ -22,7 +22,22 @@ std::string Number::printDebug(int depth) const
 {
 	std::string ret;
 	ret.resize(depth, ' ');
-	ret += "Number {" + std::to_string(value) + "}\n";
+	ret += "number {" + std::to_string(value) + "}\n";
+	return ret;
+}
+
+std::string Boolean::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "boolean {";
+
+	if(value)
+		ret += "true";
+	else
+		ret += "false";
+
+	ret += "}\n";
 	return ret;
 }
 
@@ -74,6 +89,79 @@ std::string Expression::printDebug(int depth) const
 	std::string ret;
 	ret.resize(depth, ' ');
 	ret += "e {\n";
+
+	ret += next->printDebug(depth + 1);
+	if (optional)
+		ret += optional->printDebug(depth + 1);
+
+	ret.resize(ret.size() + depth, ' ');
+	ret += "}\n";
+	return ret;
+}
+
+std::string Comparison::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "comp {\n";
+
+	ret += a->printDebug(depth + 1);
+	ret += comparator + "\n";
+	ret += b->printDebug(depth + 1);
+
+	ret.resize(ret.size() + depth, ' ');
+	ret += "}\n";
+	return ret;
+}
+
+std::string BoolExpression4::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "b4 {\n";
+
+	ret += next->printDebug(depth + 1);
+
+	ret.resize(ret.size() + depth, ' ');
+	ret += "}\n";
+	return ret;
+}
+
+std::string BoolExpression3::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "b3 {\n";
+	
+	if (negation)
+		ret += '!';
+	ret += next->printDebug(depth + 1);
+
+	ret.resize(ret.size() + depth, ' ');
+	ret += "}\n";
+	return ret;
+}
+
+std::string BoolExpression2::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "b2 {\n";
+
+	ret += next->printDebug(depth + 1);
+	if (optional)
+		ret += optional->printDebug(depth + 1);
+
+	ret.resize(ret.size() + depth, ' ');
+	ret += "}\n";
+	return ret;
+}
+
+std::string BoolExpression::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "b {\n";
 
 	ret += next->printDebug(depth + 1);
 	if (optional)

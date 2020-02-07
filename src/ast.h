@@ -38,6 +38,15 @@ public:
 	std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
+class Boolean : public Node
+{
+	bool value;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+};
+
 class Expression4 : public Node
 {
 public:
@@ -83,6 +92,61 @@ public:
 	std::string printDebug(int depth) const;
 
 	std::string generateCode(std::map<std::string, int> variables, int s);
+};
+
+class Comparison : public Node
+{
+public:
+	Expression* a;
+	Expression* b;
+	std::string comparator;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+};
+
+class BoolExpression4 : public Node
+{
+public:
+	Node* next;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+};
+
+class BoolExpression3 : public Node
+{
+public:
+	Node* next;
+	bool negation;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+};
+
+class BoolExpression2 : public Node
+{
+public:
+	BoolExpression3* next;
+	BoolExpression2* optional;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+};
+
+class BoolExpression : public Node
+{
+public:
+	BoolExpression2* next;
+	BoolExpression* optional;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Statement : public Node

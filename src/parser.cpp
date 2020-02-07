@@ -19,10 +19,10 @@ void IntDeclaration::generateSubTree(std::vector<Token>& tokenization, int& inde
 	variable = new Variable();
 	variable->generateSubTree(tokenization, index);
 
-	if (tokenization[index].s == "=")
-	{
-
-	}
+	if (tokenization[++index].type != TokenType::SpecialSymbol)
+		throw std::runtime_error("Expected a semicolon name");
+	next = getNodeInstanceByKeyword(tokenization[index]);
+	next.generateSubTree(tokenization, index);
 }
 
 void Variable::generateSubTree(std::vector<Token>& tokenization, int& index)
@@ -47,4 +47,8 @@ static Node* getNodeInstanceByKeyword(Token token)
 {
 	if (token.type != TokenType::Keyword)
 		throw std::runtime_error("Invalid token type");
+}
+void Epsilon::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	return;
 }

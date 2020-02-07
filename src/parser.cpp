@@ -200,14 +200,8 @@ void While::generateSubTree(std::vector<Token>& tokenization, int& index)
 	if (tokenization.at(++index).s != "(")
 		throw std::runtime_error("Expected opening bracket ( after while");
 
-	a = new Expression();
-	a->generateSubTree(tokenization, ++index);
-
-	if (tokenization.at(index).s != "<=")
-		throw std::runtime_error("Other boolean operators not supported");
-
-	b = new Expression();
-	b->generateSubTree(tokenization, ++index);
+	expression = new BoolExpression();
+	expression->generateSubTree(tokenization, ++index);
 
 	if (tokenization.at(index++).s != ")")
 		throw std::runtime_error("Expected closing bracket ) after while");
@@ -230,14 +224,8 @@ void If::generateSubTree(std::vector<Token>& tokenization, int& index)
 	if (tokenization.at(++index).s != "(")
 		throw std::runtime_error("Expected opening bracket ( after if");
 
-	a = new Expression();
-	a->generateSubTree(tokenization, ++index);
-
-	if (tokenization.at(index).s != "<=")
-		throw std::runtime_error("Other boolean operators not supported");
-
-	b = new Expression();
-	b->generateSubTree(tokenization, ++index);
+	expression = new BoolExpression();
+	expression->generateSubTree(tokenization, ++index);
 
 	if (tokenization.at(index++).s != ")")
 		throw std::runtime_error("Expected closing bracket ) after if");

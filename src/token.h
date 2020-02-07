@@ -4,7 +4,8 @@ enum class TokenType {
 	Keyword,
 	Identifier,
 	Constant,
-	SpecialSymbol
+	SpecialSymbol,
+	BooleanOperator
 };
 
 class Token

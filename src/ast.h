@@ -199,8 +199,7 @@ public:
 class While : public Statement
 {
 public:
-	Expression* a;
-	Expression* b;
+	BoolExpression* expression;
 	Statement* body;
 	Statement* next;
 
@@ -212,8 +211,7 @@ public:
 class If : public Statement
 {
 public:
-	Expression* a;
-	Expression* b;
+	BoolExpression* expression;
 	Statement* body;
 	Statement* next;
 

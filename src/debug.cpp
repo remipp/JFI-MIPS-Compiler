@@ -99,7 +99,9 @@ std::string IntDeclaration::printDebug(int depth) const
 	ret += "int {\n";
 
 	ret += variable->printDebug(depth + 1);
-	ret += next->printDebug(depth + 1);
+
+	if (next)
+		ret += next->printDebug(depth + 1);
 
 	ret.resize(ret.size() + depth, ' ');
 	ret += "}\n";
@@ -110,11 +112,13 @@ std::string Assignment::printDebug(int depth) const
 {
 	std::string ret;
 	ret.resize(depth, ' ');
-	ret += "int {\n";
+	ret += "assign {\n";
 
 	ret += variable->printDebug(depth + 1);
 	ret += expression->printDebug(depth + 1);
-	ret += next->printDebug(depth + 1);
+
+	if (next)
+		ret += next->printDebug(depth + 1);
 
 	ret.resize(ret.size() + depth, ' ');
 	ret += "}\n";
@@ -126,6 +130,24 @@ std::string Epsilon::printDebug(int depth) const
 	std::string ret;
 	ret.resize(depth, ' ');
 	ret += "epsilon {}\n";
+	return ret;
+}
+
+std::string While::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "while {\n";
+
+	ret += a->printDebug(depth + 1);
+	ret += b->printDebug(depth + 1);
+	ret += body->printDebug(depth + 1);
+
+	if (next)
+		ret += next->printDebug(depth + 1);
+
+	ret.resize(ret.size() + depth, ' ');
+	ret += "}\n";
 	return ret;
 }
 

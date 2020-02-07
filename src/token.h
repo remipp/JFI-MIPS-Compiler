@@ -7,7 +7,8 @@ enum class TokenType {
 	SpecialSymbol
 };
 
-class Token {
+class Token
+{
 public:
 	std::string s;
 	TokenType type;

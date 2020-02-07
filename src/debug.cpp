@@ -151,6 +151,24 @@ std::string While::printDebug(int depth) const
 	return ret;
 }
 
+std::string If::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "if {\n";
+
+	ret += a->printDebug(depth + 1);
+	ret += b->printDebug(depth + 1);
+	ret += body->printDebug(depth + 1);
+
+	if (next)
+		ret += next->printDebug(depth + 1);
+
+	ret.resize(ret.size() + depth, ' ');
+	ret += "}\n";
+	return ret;
+}
+
 std::ostream& operator<<(std::ostream& os, const Node& root)
 {
 	os << root.printDebug(0);

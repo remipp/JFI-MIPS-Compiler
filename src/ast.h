@@ -131,3 +131,16 @@ public:
 
 	std::string printDebug(int depth) const;
 };
+
+class If : public Statement
+{
+public:
+	Expression* a;
+	Expression* b;
+	Statement* body;
+	Statement* next;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+};

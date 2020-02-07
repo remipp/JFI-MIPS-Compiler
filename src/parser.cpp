@@ -150,6 +150,38 @@ void While::generateSubTree(std::vector<Token>& tokenization, int& index)
 		next->generateSubTree(tokenization, index);
 }
 
+void If::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	if (tokenization[++index].s != "(")
+		throw std::runtime_error("Expected opening bracket ( after if");
+
+	a = new Expression();
+	a->generateSubTree(tokenization, ++index);
+
+	if (tokenization[index].s != "<=")
+		throw std::runtime_error("Other boolean operators not supported");
+
+	b = new Expression();
+	b->generateSubTree(tokenization, ++index);
+
+	if (tokenization[index++].s != ")")
+		throw std::runtime_error("Expected closing bracket ) after if");
+
+	if (tokenization[index].s != "{")
+		throw std::runtime_error("Expected opening bracket { after if");
+	
+	body = getNodeInstanceByKeyword(tokenization, ++index);
+	body->generateSubTree(tokenization, index);
+
+	if (tokenization[index].s != "}")
+		throw std::runtime_error("Expected closing bracket } after if block");
+	std::cout << tokenization[index + 1].s << std::endl;
+
+	next = getNodeInstanceByKeyword(tokenization, ++index);
+	if (next)
+		next->generateSubTree(tokenization, index);
+}
+
 Node* generateAST(std::vector<Token>& tokenization)
 {
 	Node* root = getNodeInstanceByKeyword(tokenization, 0);
@@ -167,6 +199,8 @@ static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int
 		return new IntDeclaration();
 	else if (tokenization[index].s == "while")
 		return new While();
+	else if (tokenization[index].s == "if")
+		return new If();
 	else if (tokenization[index+1].s == "=")
 	{
 		if (tokenization[index+2].type == TokenType::Keyword)

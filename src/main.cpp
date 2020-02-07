@@ -27,4 +27,11 @@ int main(int argc, char** argv) {
 	std::cout << "Parser: " << std::endl;
 	Node* ast = generateAST(l.tokens);
 	std::cout << *ast << std::endl;
+
+	std::map<std::string, int> variables;
+	int s = 0;
+	std::string code = ast->generateCode(variables, s);
+
+	std::cout << "Code:" << std::endl;
+	std::cout << code << std::endl;
 }

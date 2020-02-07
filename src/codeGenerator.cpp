@@ -85,9 +85,8 @@ std::string Expression3::generateCode(std::map<std::string, int>& variables, int
 	if(negation)
 	{
 		command += "lw $v0 4($sp)\n";
-		command += "neg $v0 $v0\n";
+		command += "sub $v0 $zero $v0\n";
 		command += "sw $v0 4($sp)\n";
-		command += "addi $sp $sp 4\n";
 	}
 
 	return command;
@@ -205,4 +204,13 @@ std::string Node::generateCode(std::map<std::string, int>& variables, int& s){
 
 std::string Statement::generateCode(std::map<std::string, int>& variables, int& s){
 	return "";
+}
+
+std::string Print::generateCode(std::map<std::string, int>& variables, int& s)
+{
+	std::string command = expression->generateCode(variables, s);
+	command += "li $v0, 1\n";
+	command += "lw $a0, $sp\n";
+	command += "syscall\n";
+	return command;
 }

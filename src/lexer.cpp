@@ -6,10 +6,11 @@
 
 Lexer::Lexer(std::string fileContent)
 {
-	std::regex rgx("([A-z0-9]+)|<=|[\\(\\)\\{\\}+*-;=]");
+	std::regex rgx("([A-z0-9]+)|[=<>]=?|[\\(\\)\\{\\}+*-;=]");
 	std::regex intConst("^\\d+$");
 	std::regex identifier("^[A-z][A-z0-9_]*$");
-	std::regex special("^<=|[=;,\\(\\)\\{\\}\\+*-]");
+	std::regex booleanOperator("^[=<>]=?$");
+	std::regex special("^[=;,\\(\\)\\{\\}\\+*-]");
 	std::smatch m;
 	std::sregex_iterator it(fileContent.begin(), fileContent.end(), rgx), it_end;
 	for(; it != it_end; ++it)
@@ -29,6 +30,10 @@ Lexer::Lexer(std::string fileContent)
 			else if (std::regex_match(buf.s, identifier))
 			{
 				buf.type = TokenType::Identifier;
+			}
+			else if (std::regex_match(buf.s, booleanOperator))
+			{
+				buf.type = TokenType::BooleanOperator;
 			}
 			else if (std::regex_match(buf.s, special))
 			{

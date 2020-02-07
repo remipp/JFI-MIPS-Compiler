@@ -262,6 +262,10 @@ static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int
 		return new While();
 	else if (tokenization.at(index).s == "if")
 		return new If();
+	else if (tokenization.at(index).s == "print")
+		return new Print();
+	else if (tokenization.at(index).s == "exit")
+		return new Exit();
 	else if (tokenization.at(index + 1).s == "=")
 	{
 		if (tokenization.at(index + 2).type == TokenType::Keyword)
@@ -280,4 +284,30 @@ static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int
 void Epsilon::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
 	return;
+}
+
+void Print::generateSubTree(std::vector<Token>& tokenization, int& index)
+{ 
+	if (tokenization.at(++index).s != "(")
+		throw std::runtime_error("Expected opening bracket ( after print");
+
+	expression = new Expression();
+	expression->generateSubTree(tokenization, ++index);
+
+	if (tokenization.at(index++).s != ")")
+		throw std::runtime_error("Expected closing bracket ) after print");
+	if (tokenization.at(index++).s != ";")
+		throw std::runtime_error("Expected semicolon");
+	next = getNodeInstanceByKeyword(tokenization, index);
+	next->generateSubTree(tokenization, index);
+}
+
+void Exit::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	if (tokenization.at(++index).s != "(" || tokenization.at(++index).s != ")")
+		throw std::runtime_error("Expected opening and closing bracket after print");
+	if (tokenization.at(++index).s != ";")
+		throw std::runtime_error("Expected semicolon");
+	next = new Epsilon();
+	next->generateSubTree(tokenization, index);
 }

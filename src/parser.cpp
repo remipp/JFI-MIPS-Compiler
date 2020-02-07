@@ -11,13 +11,13 @@ void Node::generateSubTree(std::vector<Token>& tokenization, int& index) {}
 
 void IntDeclaration::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	if (tokenization[++index].type != TokenType::Identifier)
+	if (tokenization.at(++index).type != TokenType::Identifier)
 		throw std::runtime_error("Expected an identifier after int");
 
 	variable = new Variable();
 	variable->generateSubTree(tokenization, index);
 
-	if (tokenization[index++].s != ";")
+	if (tokenization.at(index++).s != ";")
 		throw std::runtime_error("Expected a semicolon after name");
 	next = getNodeInstanceByKeyword(tokenization, index);
 	next->generateSubTree(tokenization, index);
@@ -25,17 +25,27 @@ void IntDeclaration::generateSubTree(std::vector<Token>& tokenization, int& inde
 
 void Variable::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	name = tokenization[index++].s;
+	name = tokenization.at(index++).s;
 }
 
 void Number::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	value = std::stoi(tokenization[index++].s);
+	value = std::stoi(tokenization.at(index++).s);
+}
+
+void Boolean::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	if (tokenization.at(index++).s == "true")
+		value = true;
+	else if (tokenization.at(index).s == "false")
+		value = false;
+	else
+		throw std::runtime_error("Invalid token for boolean value");
 }
 
 void Assignment::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	if (tokenization[index].type != TokenType::Identifier)
+	if (tokenization.at(index).type != TokenType::Identifier)
 		throw std::runtime_error("Expected an identifier");
 
 	variable = new Variable();
@@ -46,7 +56,7 @@ void Assignment::generateSubTree(std::vector<Token>& tokenization, int& index)
 	expression = new Expression();
 	expression->generateSubTree(tokenization, index);
 
-	if (tokenization[index++].s != ";")
+	if (tokenization.at(index++).s != ";")
 		throw std::runtime_error("Expected a semicolon after assignment");
 
 	next = getNodeInstanceByKeyword(tokenization, index);
@@ -60,7 +70,7 @@ void Expression::generateSubTree(std::vector<Token>& tokenization, int& index)
 	next = new Expression2();
 	next->generateSubTree(tokenization, index);
 
-	if (tokenization[index].s == "+")
+	if (tokenization.at(index).s == "+")
 	{
 		optional = new Expression();
 		optional->generateSubTree(tokenization, ++index);
@@ -72,7 +82,7 @@ void Expression2::generateSubTree(std::vector<Token>& tokenization, int& index)
 	next = new Expression3();
 	next->generateSubTree(tokenization, index);
 
-	if (tokenization[index].s == "*")
+	if (tokenization.at(index).s == "*")
 	{
 		optional = new Expression2();
 		optional->generateSubTree(tokenization, ++index);
@@ -81,7 +91,7 @@ void Expression2::generateSubTree(std::vector<Token>& tokenization, int& index)
 
 void Expression3::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	negation = tokenization[index].s == "-";
+	negation = tokenization.at(index).s == "-";
 	if (negation)
 		index++;
 
@@ -95,14 +105,14 @@ void Expression3::generateSubTree(std::vector<Token>& tokenization, int& index)
 
 void Expression4::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	if (tokenization[index].s == "(")
+	if (tokenization.at(index).s == "(")
 	{
 		index++;
 		next = new Expression();
 		next->generateSubTree(tokenization, index);
 		index++;
 	}
-	else if (tokenization[index].type == TokenType::Constant) {
+	else if (tokenization.at(index).type == TokenType::Constant) {
 		next = new Number();
 		next->generateSubTree(tokenization, index);
 	}
@@ -113,32 +123,103 @@ void Expression4::generateSubTree(std::vector<Token>& tokenization, int& index)
 	}
 }
 
+void BoolExpression::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	next = new BoolExpression2();
+	next->generateSubTree(tokenization, index);
+
+	if (tokenization.at(index).s == "||")
+	{
+		optional = new BoolExpression();
+		optional->generateSubTree(tokenization, ++index);
+	}
+}
+
+void BoolExpression2::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	next = new BoolExpression3();
+	next->generateSubTree(tokenization, index);
+
+	if (tokenization.at(index).s == "&&")
+	{
+		optional = new BoolExpression2();
+		optional->generateSubTree(tokenization, ++index);
+	}
+}
+
+void BoolExpression3::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	negation = tokenization.at(index).s == "!";
+	if (negation)
+		index++;
+
+	if (negation)
+		next = new BoolExpression3();
+	else
+		next = new BoolExpression4();
+
+	next->generateSubTree(tokenization, index);
+}
+
+void BoolExpression4::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	if (tokenization.at(index).s == "(")
+	{
+		index++;
+		next = new BoolExpression();
+		next->generateSubTree(tokenization, index);
+		index++;
+	}
+	else if (tokenization.at(index).type == TokenType::Keyword)
+	{
+		next = new Boolean();
+		next->generateSubTree(tokenization, index);
+	}
+	else
+	{
+		next = new Comparison();
+		next->generateSubTree(tokenization, index);
+	}
+}
+
+void Comparison::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	a = new Expression();
+	a->generateSubTree(tokenization, index);
+
+	if (tokenization.at(++index).type != TokenType::BooleanOperator)
+		throw std::runtime_error("Expected a boolean operator");
+	comparator = tokenization.at(index).s;
+
+	b = new Expression();
+	b->generateSubTree(tokenization, ++index);
+}
+
 void While::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	if (tokenization[++index].s != "(")
+	if (tokenization.at(++index).s != "(")
 		throw std::runtime_error("Expected opening bracket ( after while");
 
 	a = new Expression();
 	a->generateSubTree(tokenization, ++index);
 
-	if (tokenization[index].s != "<=")
+	if (tokenization.at(index).s != "<=")
 		throw std::runtime_error("Other boolean operators not supported");
 
 	b = new Expression();
 	b->generateSubTree(tokenization, ++index);
 
-	if (tokenization[index++].s != ")")
+	if (tokenization.at(index++).s != ")")
 		throw std::runtime_error("Expected closing bracket ) after while");
 
-	if (tokenization[index].s != "{")
+	if (tokenization.at(index).s != "{")
 		throw std::runtime_error("Expected opening bracket { after while");
 	
 	body = getNodeInstanceByKeyword(tokenization, ++index);
 	body->generateSubTree(tokenization, index);
 
-	if (tokenization[index].s != "}")
+	if (tokenization.at(index).s != "}")
 		throw std::runtime_error("Expected closing bracket } after while block");
-	std::cout << tokenization[index + 1].s << std::endl;
 
 	next = getNodeInstanceByKeyword(tokenization, ++index);
 	next->generateSubTree(tokenization, index);
@@ -146,30 +227,29 @@ void While::generateSubTree(std::vector<Token>& tokenization, int& index)
 
 void If::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	if (tokenization[++index].s != "(")
+	if (tokenization.at(++index).s != "(")
 		throw std::runtime_error("Expected opening bracket ( after if");
 
 	a = new Expression();
 	a->generateSubTree(tokenization, ++index);
 
-	if (tokenization[index].s != "<=")
+	if (tokenization.at(index).s != "<=")
 		throw std::runtime_error("Other boolean operators not supported");
 
 	b = new Expression();
 	b->generateSubTree(tokenization, ++index);
 
-	if (tokenization[index++].s != ")")
+	if (tokenization.at(index++).s != ")")
 		throw std::runtime_error("Expected closing bracket ) after if");
 
-	if (tokenization[index].s != "{")
+	if (tokenization.at(index).s != "{")
 		throw std::runtime_error("Expected opening bracket { after if");
 	
 	body = getNodeInstanceByKeyword(tokenization, ++index);
 	body->generateSubTree(tokenization, index);
 
-	if (tokenization[index].s != "}")
+	if (tokenization.at(index).s != "}")
 		throw std::runtime_error("Expected closing bracket } after if block");
-	std::cout << tokenization[index + 1].s << std::endl;
 
 	next = getNodeInstanceByKeyword(tokenization, ++index);
 	next->generateSubTree(tokenization, index);
@@ -188,15 +268,15 @@ static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int
 	if (index >= tokenization.size())
 		return new Epsilon();
 
-	if (tokenization[index].s == "int")
+	if (tokenization.at(index).s == "int")
 		return new IntDeclaration();
-	else if (tokenization[index].s == "while")
+	else if (tokenization.at(index).s == "while")
 		return new While();
-	else if (tokenization[index].s == "if")
+	else if (tokenization.at(index).s == "if")
 		return new If();
-	else if (tokenization[index+1].s == "=")
+	else if (tokenization.at(index + 1).s == "=")
 	{
-		if (tokenization[index+2].type == TokenType::Keyword)
+		if (tokenization.at(index + 2).type == TokenType::Keyword)
 		{
 			// TODO syscall?
 		}

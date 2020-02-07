@@ -4,26 +4,38 @@
 #include <iostream>
 #include <set>
 
-Lexer::Lexer(std::string fileContent) {
+Lexer::Lexer(std::string fileContent)
+{
 	std::regex rgx("([A-z0-9]+)|<=|[\\(\\)\\{\\}+*-;=]");
 	std::regex intConst("^\\d+$");
 	std::regex identifier("^[A-z][A-z0-9_]*$");
 	std::regex special("^<=|[=;,\\(\\)\\{\\}\\+*-]");
 	std::smatch m;
 	std::sregex_iterator it(fileContent.begin(), fileContent.end(), rgx), it_end;
-	for(; it != it_end; ++it) {
+	for(; it != it_end; ++it)
+	{
 		Token buf;
 		buf.s = (*it)[0];
-		if (typeMap.find(buf.s) != typeMap.end()) {
+		if (typeMap.find(buf.s) != typeMap.end())
+		{
 			buf.type = typeMap[buf.s];
-		} else {
-			if (std::regex_match(buf.s, intConst)) {
+		}
+		else
+		{
+			if (std::regex_match(buf.s, intConst))
+			{
 				buf.type = TokenType::Constant;
-			} else if (std::regex_match(buf.s, identifier)) {
+			}
+			else if (std::regex_match(buf.s, identifier))
+			{
 				buf.type = TokenType::Identifier;
-			} else if (std::regex_match(buf.s, special)) {
+			}
+			else if (std::regex_match(buf.s, special))
+			{
 				buf.type = TokenType::SpecialSymbol;
-			} else {
+			}
+			else
+			{
 				buf.type = (TokenType)-1;
 			}
 		}

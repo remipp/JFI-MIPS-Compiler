@@ -308,6 +308,6 @@ void Exit::generateSubTree(std::vector<Token>& tokenization, int& index)
 		throw std::runtime_error("Expected opening and closing bracket after print");
 	if (tokenization.at(++index).s != ";")
 		throw std::runtime_error("Expected semicolon");
-	next = new Epsilon();
+	next = getNodeInstanceByKeyword(tokenization, ++index);
 	next->generateSubTree(tokenization, index);
 }

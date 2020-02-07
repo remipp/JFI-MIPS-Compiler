@@ -251,3 +251,11 @@ std::string Print::generateCode(std::map<std::string, int>& variables, int& s)
 	command += next->generateCode(variables, s);
 	return command;
 }
+
+std::string Exit::generateCode(std::map<std::string, int>& variables, int& s)
+{
+	std::string command = "li $v0, 10\n";
+	command += "syscall\n";
+	command += next->generateCode(variables, s);
+	return command;
+}

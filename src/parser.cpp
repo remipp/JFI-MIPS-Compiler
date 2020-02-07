@@ -39,7 +39,7 @@ void Assigment::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
 	if (tokenization[index].type != TokenType::Identifier)
 		throw std::runtime_error("Expected an identifier");
-	
+
 	variable = new Variable();
 	variable->generateSubTree(tokenization, index);
 

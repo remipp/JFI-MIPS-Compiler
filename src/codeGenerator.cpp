@@ -1,7 +1,15 @@
-#include "codeGenerator.h"
-#include <iostream>
-using namespace std;
+#include "ast.h"
+#include <map>
 
-void CodeGenerator::generateCode(){
-  cout << "generating code..." << endl;
+std::string IntDeclaration::generateCode(std::map<std::string, int> variables, int s)
+{
+  if(variables.find(this->variable->name) != variables.end())
+  {
+    throw std::runtime_error("Syntax error: " + this->variable->name + " is already taken.");
+  }
+
+  variables.insert(make_pair(this->variable->name, s));
+  s++;
+
+	return "";
 }

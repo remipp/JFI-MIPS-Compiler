@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 #include "token.h"
 
@@ -9,6 +10,7 @@ class Node
 {
 public:
 	virtual void generateSubTree(std::vector<Token>& tokenization, int& index);
+	virtual std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
 class Variable : public Node
@@ -65,6 +67,7 @@ class Statement : public Node
 {
 public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+	std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
 class IntDeclaration : public Statement
@@ -74,6 +77,7 @@ public:
 	Statement* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+	std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
 class Assigment : public Statement

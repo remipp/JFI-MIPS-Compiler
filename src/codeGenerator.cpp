@@ -111,6 +111,90 @@ std::string Number::generateCode(std::map<std::string, int>& variables, int& s)
 	return command;
 }
 
+std::string BoolExpression::generateCode(std::map<std::string, int>& variables, int& s){
+	std::string command = this->next->generateCode(variables, s);
+
+ if(this->optional){
+	 command += this->optional->generateCode(variables, s);
+	 command += "lw $v0 4($sp)\n";
+	 command += "lw $v1 8($sp)\n";
+	 command += "or $v0 $v0 $v1\n";
+	 command += "sw $v0 8($sp)\n";
+	 command += "addi $sp $sp 4\n";
+
+	 s--;
+ }
+
+ return command;
+}
+
+std::string BoolExpression2::generateCode(std::map<std::string, int>& variables, int& s){
+	std::string command = this->next->generateCode(variables, s);
+
+ if(this->optional){
+	 command += this->optional->generateCode(variables, s);
+	 command += "lw $v0 4($sp)\n";
+	 command += "lw $v1 8($sp)\n";
+	 command += "and $v0 $v0 $v1\n";
+	 command += "sw $v0 8($sp)\n";
+	 command += "addi $sp $sp 4\n";
+
+	 s--;
+ }
+
+ return command;
+}
+
+std::string BoolExpression3::generateCode(std::map<std::string, int>& variables, int& s){
+	std::string command = this->next->generateCode(variables, s);
+
+ if(this->negation){
+	 command += "lw $v0 4($sp)\n";
+	 command += "neg $v0 $v0\n";
+	 command += "sw $v0 8($sp)\n";
+ }
+
+ return command;
+}
+
+std::string BoolExpression4::generateCode(std::map<std::string, int>& variables, int& s){
+	std::string command = this->next->generateCode(variables, s);
+
+ return command;
+}
+
+std::string Comparison::generateCode(std::map<std::string, int>& variables, int& s){
+	std::string command = this->a->generateCode(variables, s);
+	command += this->b->generateCode(variables, s);
+
+	command += "lw $v0 4($sp)\n";
+	command += "lw $v1 8($sp)\n";
+
+	if(this->comparator == "<"){
+		command += "sgt $v0 $v1 $v0\n";
+}else if(this->comparator == ">"){
+		command += "sgt $v0 $v0 $v1\n";
+	}else if(this->comparator == "=="){
+		command += "seq $v0 $v0 $v1\n";
+	}else if(this->comparator == "!="){
+		command += "sne $v0 $v0 $v1\n";
+	}else if(this->comparator == "<="){
+		command += "sle $v0 $v0 $v1\n";
+	}else if(this->comparator == ">="){
+		command += "sge $v0 $v0 $v1\n";
+	}else{
+		command += "li $v0 0";
+	}
+
+	command += "sw $v0 8($sp)\n";
+	command += "addi $sp $sp 4\n";
+
+	s--;
+
+ return command;
+}
+
+
 std::string Epsilon::generateCode(std::map<std::string, int>& variables, int& s){
 	return "";
 }

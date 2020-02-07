@@ -107,6 +107,8 @@ public:
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
+
 	std::string printDebug(int depth) const;
 };
 
@@ -116,6 +118,8 @@ public:
 	Node* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
 
 	std::string printDebug(int depth) const;
 };
@@ -127,6 +131,8 @@ public:
 	bool negation;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
 
 	std::string printDebug(int depth) const;
 };
@@ -140,6 +146,8 @@ public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
 	std::string printDebug(int depth) const;
+
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
 };
 
 class BoolExpression : public Node
@@ -149,6 +157,8 @@ public:
 	BoolExpression* optional;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
 
 	std::string printDebug(int depth) const;
 };

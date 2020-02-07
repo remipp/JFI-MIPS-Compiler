@@ -35,6 +35,23 @@ void Number::generateSubTree(std::vector<Token>& tokenization, int& index)
 	value = std::stoi(tokenization[index++].s);
 }
 
+void Assigment::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	if (tokenization[index].type != TokenType::Identifier)
+		throw std::runtime_error("Expected an identifier");
+	
+	variable = new Variable();
+	variable->generateSubTree(tokenization, index);
+
+	index++; //Skip over equal sign
+
+	expression = new Expression();
+	expression->generateSubTree(tokenization, index);
+
+	if (tokenization[index++].type != TokenType::SpecialSymbol)
+		throw std::runtime_error("Expected a semicolon after assignment");
+}
+
 Node* generateAST(std::vector<Token>& tokenization)
 {
 	Node* root = getNodeInstanceByKeyword(tokenization[0]);

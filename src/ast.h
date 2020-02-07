@@ -80,7 +80,7 @@ class Assigment : public Statement
 {
 public:
 	Variable* variable;
-	Expression expression;
+	Expression* expression;
 	Statement* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);

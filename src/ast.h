@@ -15,6 +15,7 @@ public:
 	Node(std::string value);
 
 	virtual void parseSubTree(std::vector<Token>& tokenization, int& index);
+	
 };
 
 class IntDeclaration : public Node

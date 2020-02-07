@@ -59,12 +59,27 @@ void Statement::generateSubTree(std::vector<Token>& tokenization, int& index)
 
 void Expression::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
+	next = new Expression2();
+	next->generateSubTree(tokenization, index);
 
+	if (tokenization[index].s == "+")
+	{
+		optional = new Expression();
+		optional->generateSubTree(tokenization, ++index);
+	}
 }
 
 void Expression2::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	
+	next = new Expression3();
+	next->generateSubTree(tokenization, index);
+
+	if (tokenization[index].s == "*")
+	{
+		optional = new Expression2();
+		optional->generateSubTree(tokenization, index);
+		index++;
+	}
 }
 
 void Expression3::generateSubTree(std::vector<Token>& tokenization, int& index)

@@ -78,6 +78,28 @@ std::string Expression2::generateCode(std::map<std::string, int> variables, int 
 	return command;
 }
 
+std::string Expression3::generateCode(std::map<std::string, int> variables, int s)
+{
+	std::string command = this->next->generateCode(variables, s);
+
+	if(negation)
+	{
+		command += "li $v0 4($sp)\n";
+		command += "neg $v0 $v0\n";
+		command += "sw $v0 4($sp)\n";
+		command += "addi $sp 4\n";
+	}
+
+	return command;
+}
+
+std::string Expression4::generateCode(std::map<std::string, int> variables, int s)
+{
+	std::string command = this->next->generateCode(variables, s);
+
+	return command;
+}
+
 std::string Number::generateCode(std::map<std::string, int> variables, int s)
 {
 	std::string command = "li $v0 " + std::to_string(this->value) + "\n";

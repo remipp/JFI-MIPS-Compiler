@@ -7,10 +7,7 @@
 
 static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int index);
 
-void Node::generateSubTree(std::vector<Token>& tokenization, int& index)
-{
-	throw std::runtime_error("Cannot call generateSubTree for base class Node");
-}
+void Node::generateSubTree(std::vector<Token>& tokenization, int& index) {}
 
 void IntDeclaration::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
@@ -23,9 +20,7 @@ void IntDeclaration::generateSubTree(std::vector<Token>& tokenization, int& inde
 	if (tokenization[index++].s != ";")
 		throw std::runtime_error("Expected a semicolon after name");
 	next = getNodeInstanceByKeyword(tokenization, index);
-
-	if (next)
-		next->generateSubTree(tokenization, index);
+	next->generateSubTree(tokenization, index);
 }
 
 void Variable::generateSubTree(std::vector<Token>& tokenization, int& index)
@@ -55,15 +50,10 @@ void Assignment::generateSubTree(std::vector<Token>& tokenization, int& index)
 		throw std::runtime_error("Expected a semicolon after assignment");
 
 	next = getNodeInstanceByKeyword(tokenization, index);
-
-	if (next)
-		next->generateSubTree(tokenization, index);
+	next->generateSubTree(tokenization, index);
 }
 
-void Statement::generateSubTree(std::vector<Token>& tokenization, int& index)
-{
-	throw std::runtime_error("Cannot call generateSubTree for base class Statement");
-}
+void Statement::generateSubTree(std::vector<Token>& tokenization, int& index) {}
 
 void Expression::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
@@ -146,8 +136,7 @@ void While::generateSubTree(std::vector<Token>& tokenization, int& index)
 	std::cout << tokenization[index + 1].s << std::endl;
 
 	next = getNodeInstanceByKeyword(tokenization, ++index);
-	if (next)
-		next->generateSubTree(tokenization, index);
+	next->generateSubTree(tokenization, index);
 }
 
 void If::generateSubTree(std::vector<Token>& tokenization, int& index)
@@ -178,8 +167,7 @@ void If::generateSubTree(std::vector<Token>& tokenization, int& index)
 	std::cout << tokenization[index + 1].s << std::endl;
 
 	next = getNodeInstanceByKeyword(tokenization, ++index);
-	if (next)
-		next->generateSubTree(tokenization, index);
+	next->generateSubTree(tokenization, index);
 }
 
 Node* generateAST(std::vector<Token>& tokenization)
@@ -213,7 +201,7 @@ static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int
 		}
 	}
 	else
-		return nullptr;
+		return new Statement();
 }
 
 void Epsilon::generateSubTree(std::vector<Token>& tokenization, int& index)

@@ -1,5 +1,9 @@
 #include "lexer.h"
+#include "parser.h"
 #include "codeGenerator.h"
+
+#include "debug.h"
+
 #include <iostream>
 #include <fstream>
 #include <streambuf>
@@ -13,9 +17,14 @@ int main(int argc, char** argv) {
 	std::string str((std::istreambuf_iterator<char>(f)),
 			std::istreambuf_iterator<char>());
 
-	//std::cout << str << std::endl;
+	std::cout << "Lexer: " << std::endl;
 	Lexer l(str);
 	for (auto a : l.tokens) {
 		std::cout << a.s << " " << (int)a.type << std::endl;
 	}
+	std::cout << std::endl;
+
+	std::cout << "Parser: " << std::endl;
+	Node* ast = generateAST(l.tokens);
+	std::cout << *ast << std::endl;
 }

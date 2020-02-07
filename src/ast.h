@@ -9,6 +9,8 @@ class Node
 {
 public:
 	virtual void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	virtual std::string printDebug(int depth) const;
 };
 
 class Variable : public Node
@@ -17,6 +19,8 @@ public:
 	std::string name;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Number : public Node
@@ -25,6 +29,8 @@ public:
 	int value;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Expression4 : public Node
@@ -33,6 +39,8 @@ public:
 	Node* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Expression3 : public Node
@@ -42,6 +50,8 @@ public:
 	bool negation;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Expression2 : public Node
@@ -51,6 +61,8 @@ public:
 	Expression2* optional;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Expression : public Node
@@ -60,12 +72,16 @@ public:
 	Expression* optional;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Statement : public Node
 {
 public:
 	virtual void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class IntDeclaration : public Statement
@@ -75,6 +91,8 @@ public:
 	Statement* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Assignment : public Statement
@@ -85,10 +103,14 @@ public:
 	Statement* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Epsilon : public Statement
 {
 public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };

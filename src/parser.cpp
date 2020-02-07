@@ -13,7 +13,7 @@ void Node::generateSubTree(std::vector<Token>& tokenization, int& index)
 
 void IntDeclaration::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	if (tokenization[index++].type != TokenType::Identifier)
+	if (tokenization[++index].type != TokenType::Identifier)
 		throw std::runtime_error("Expected an identifier after int");
 
 	variable = new Variable();
@@ -48,8 +48,11 @@ void Assignment::generateSubTree(std::vector<Token>& tokenization, int& index)
 	expression = new Expression();
 	expression->generateSubTree(tokenization, index);
 
-	if (tokenization[index++].s == ";")
+	if (tokenization[index++].s != ";")
 		throw std::runtime_error("Expected a semicolon after assignment");
+
+	next = getNodeInstanceByKeyword(tokenization, index);
+	next->generateSubTree(tokenization, index);
 }
 
 void Statement::generateSubTree(std::vector<Token>& tokenization, int& index)
@@ -77,14 +80,15 @@ void Expression2::generateSubTree(std::vector<Token>& tokenization, int& index)
 	if (tokenization[index].s == "*")
 	{
 		optional = new Expression2();
-		optional->generateSubTree(tokenization, index);
-		index++;
+		optional->generateSubTree(tokenization, ++index);
 	}
 }
 
 void Expression3::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	negation = tokenization[index++].s == "-";
+	negation = tokenization[index].s == "-";
+	if (negation)
+		index++;
 	next = new Expression4();
 	next->generateSubTree(tokenization, index);
 }
@@ -121,8 +125,6 @@ static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int
 {
 	if (index >= tokenization.size())
 		return new Epsilon();
-	if (tokenization[index].type != TokenType::Keyword)
-		throw std::runtime_error("Invalid token type");
 
 	if (tokenization[index].s == "int")
 		return new IntDeclaration();

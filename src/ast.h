@@ -10,7 +10,8 @@ class Node
 {
 public:
 	virtual void generateSubTree(std::vector<Token>& tokenization, int& index);
-	virtual std::string generateCode(std::map<std::string, int> variables, int s);
+	// virtual std::string generateCode(std::map<std::string, int> variables, int s);
+	virtual std::string printDebug(int depth) const;
 };
 
 class Variable : public Node
@@ -19,6 +20,8 @@ public:
 	std::string name;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Number : public Node
@@ -27,15 +30,29 @@ public:
 	int value;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
-class Expression : public Node
+class Expression4 : public Node
 {
 public:
-	Expression2* next;
-	Expression* optional;
+	Node* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+};
+
+class Expression3 : public Node
+{
+public:
+	Node* next;
+	bool negation;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Expression2 : public Node
@@ -45,29 +62,28 @@ public:
 	Expression2* optional;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
-class Expression3 : public Node
+class Expression : public Node
 {
 public:
-	Node* next;
+	Expression2* next;
+	Expression* optional;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
-};
 
-class Expression4 : public Node
-{
-public:
-	Node* value;
-
-	void generateSubTree(std::vector<Token>& tokenization, int& index);
+	std::string printDebug(int depth) const;
 };
 
 class Statement : public Node
 {
 public:
-	void generateSubTree(std::vector<Token>& tokenization, int& index);
-	std::string generateCode(std::map<std::string, int> variables, int s);
+	virtual void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+	// std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
 class IntDeclaration : public Statement
@@ -77,10 +93,13 @@ public:
 	Statement* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+
 	std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
-class Assigment : public Statement
+class Assignment : public Statement
 {
 public:
 	Variable* variable;
@@ -88,10 +107,14 @@ public:
 	Statement* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };
 
 class Epsilon : public Statement
 {
 public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
 };

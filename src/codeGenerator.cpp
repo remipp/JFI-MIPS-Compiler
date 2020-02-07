@@ -13,7 +13,7 @@ std::string IntDeclaration::generateCode(std::map<std::string, int> variables, i
 
 	std::string command = "li $v0 0\n";
 	command += "sw $v0 ($sp)\n";
-	command += "addi $sp $sp 4\n";
+	command += "addi $sp $sp -4\n";
 
 	command += this->next->generateCode(variables, s);
 
@@ -30,11 +30,8 @@ std::string Assignment::generateCode(std::map<std::string, int> variables, int s
 	int relLocation = variables[this->variable->name];
 	int offset = 4*s - relLocation;
 
-
-	std::string command = "addi $sp $sp -" + std::to_string(offset) + "\n";
-	command += "li $v0 " + std::to_string(5) + "\n";
-	command += "sw $v0 ($sp)\n";
-	command += "addi $sp $sp " + std::to_string(offset) + "\n";
+	std::string command = "li $v0 " + std::to_string(5) + "\n";
+	command += "sw $v0 " + std::to_string(offset) + "($sp)\n";
 
 	command += this->next->generateCode(variables, s);
 

@@ -90,4 +90,4 @@ class Epsilon : public Statement
 {
 public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
-}
+};

@@ -121,3 +121,12 @@ std::string Node::generateCode(std::map<std::string, int>& variables, int& s){
 std::string Statement::generateCode(std::map<std::string, int>& variables, int& s){
 	return "";
 }
+
+std::string Print::generateCode(std::map<std::string, int>& variables, int& s)
+{
+	std::string command = expression->generateCode(variables, s);
+	command += "li $v0, 1";
+	command += "lw $a0, $(sp)";
+	command += "syscall";
+	return command;
+}

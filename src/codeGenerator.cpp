@@ -48,11 +48,11 @@ std::string Expression::generateCode(std::map<std::string, int>& variables, int&
 
 	if(this->optional){
 		command += this->optional->generateCode(variables, s);
-		command += "li $v0 4($sp)\n";
-		command += "li $v1 8($sp)\n";
-		command += "addi $v0 $v0 $v1\n";
-		command += "sw $v0 8($)\n";
-		command += "addi $sp 4\n";
+		command += "lw $v0 4($sp)\n";
+		command += "lw $v1 8($sp)\n";
+		command += "add $v0 $v0 $v1\n";
+		command += "sw $v0 8($sp)\n";
+		command += "addi $sp $sp 4\n";
 
 		s--;
 	}
@@ -66,11 +66,11 @@ std::string Expression2::generateCode(std::map<std::string, int>& variables, int
 
 	if(this->optional){
 		command += this->optional->generateCode(variables, s);
-		command += "li $v0 4($sp)\n";
-		command += "li $v1 8($sp)\n";
+		command += "lw $v0 4($sp)\n";
+		command += "lw $v1 8($sp)\n";
 		command += "mul $v0 $v0 $v1\n";
-		command += "sw $v0 8($)\n";
-		command += "addi $sp 4\n";
+		command += "sw $v0 8($sp)\n";
+		command += "addi $sp $sp 4\n";
 
 		s--;
 	}
@@ -84,10 +84,10 @@ std::string Expression3::generateCode(std::map<std::string, int>& variables, int
 
 	if(negation)
 	{
-		command += "li $v0 4($sp)\n";
+		command += "lw $v0 4($sp)\n";
 		command += "neg $v0 $v0\n";
 		command += "sw $v0 4($sp)\n";
-		command += "addi $sp 4\n";
+		command += "addi $sp $sp 4\n";
 	}
 
 	return command;
@@ -104,7 +104,7 @@ std::string Number::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	std::string command = "li $v0 " + std::to_string(this->value) + "\n";
 	command += "sw $v0 ($sp)\n";
-	command += "addi $sp $sp -4";
+	command += "addi $sp $sp -4\n";
 
 	s++;
 

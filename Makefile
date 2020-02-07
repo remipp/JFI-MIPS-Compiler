@@ -12,10 +12,10 @@ EXECUTABLE = compiler
 all: buildrepo $(BIN)/$(EXECUTABLE)
 
 clean:
-	rm $(BIN)/$(EXECUTABLE)
+	rm $(BIN)/* $(BUILD)/*
 
 run: all
-	./$(BIN)/$(EXECUTABLE)
+	./$(BIN)/$(EXECUTABLE) test.c
 
 buildrepo:
 	mkdir -p bin src build

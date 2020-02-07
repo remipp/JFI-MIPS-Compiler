@@ -84,7 +84,12 @@ void Expression3::generateSubTree(std::vector<Token>& tokenization, int& index)
 	negation = tokenization[index].s == "-";
 	if (negation)
 		index++;
-	next = new Expression4();
+
+	if (negation)
+		next = new Expression3();
+	else
+		next = new Expression4();
+
 	next->generateSubTree(tokenization, index);
 }
 

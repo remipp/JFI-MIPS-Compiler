@@ -30,7 +30,7 @@ public:
 class Expression4 : public Node
 {
 public:
-	Node* value;
+	Node* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 };
@@ -39,6 +39,7 @@ class Expression3 : public Node
 {
 public:
 	Node* next;
+	bool negation;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 };
@@ -76,7 +77,7 @@ public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 };
 
-class Assigment : public Statement
+class Assignment : public Statement
 {
 public:
 	Variable* variable;

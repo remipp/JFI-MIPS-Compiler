@@ -10,7 +10,9 @@ class Node
 {
 public:
 	virtual void generateSubTree(std::vector<Token>& tokenization, int& index);
+
 	virtual std::string generateCode(std::map<std::string, int> variables, int s);
+
 	virtual std::string printDebug(int depth) const;
 };
 
@@ -32,6 +34,8 @@ public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
 	std::string printDebug(int depth) const;
+
+	std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
 class Expression4 : public Node
@@ -64,6 +68,8 @@ public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
 	std::string printDebug(int depth) const;
+
+	std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
 class Expression : public Node
@@ -75,6 +81,8 @@ public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
 	std::string printDebug(int depth) const;
+
+	std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
 class Statement : public Node
@@ -83,6 +91,7 @@ public:
 	virtual void generateSubTree(std::vector<Token>& tokenization, int& index);
 
 	std::string printDebug(int depth) const;
+
 	std::string generateCode(std::map<std::string, int> variables, int s);
 };
 
@@ -119,7 +128,7 @@ public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
 	std::string generateCode(std::map<std::string, int> variables, int s);
-	
+
 	std::string printDebug(int depth) const;
 };
 

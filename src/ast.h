@@ -27,11 +27,18 @@ public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 };
 
-class Expression : public Node
+class Expression4 : public Node
 {
 public:
-	Expression2* next;
-	Expression* optional;
+	Node* value;
+
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+};
+
+class Expression3 : public Node
+{
+public:
+	Node* next;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 };
@@ -45,18 +52,11 @@ public:
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 };
 
-class Expression3 : public Node
+class Expression : public Node
 {
 public:
-	Node* next;
-
-	void generateSubTree(std::vector<Token>& tokenization, int& index);
-};
-
-class Expression4 : public Node
-{
-public:
-	Node* value;
+	Expression2* next;
+	Expression* optional;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 };
@@ -64,7 +64,7 @@ public:
 class Statement : public Node
 {
 public:
-	void generateSubTree(std::vector<Token>& tokenization, int& index);
+	virtual void generateSubTree(std::vector<Token>& tokenization, int& index);
 };
 
 class IntDeclaration : public Statement

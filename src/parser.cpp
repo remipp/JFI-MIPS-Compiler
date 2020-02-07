@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 
-static Node* getNodeInstanceByKeyword(Token token);
+static Statement* getNodeInstanceByKeyword(Token token);
 
 void Node::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
@@ -22,7 +22,7 @@ void IntDeclaration::generateSubTree(std::vector<Token>& tokenization, int& inde
 	if (tokenization[++index].type != TokenType::SpecialSymbol)
 		throw std::runtime_error("Expected a semicolon name");
 	next = getNodeInstanceByKeyword(tokenization[index]);
-	next.generateSubTree(tokenization, index);
+	next->generateSubTree(tokenization, index);
 }
 
 void Variable::generateSubTree(std::vector<Token>& tokenization, int& index)
@@ -52,6 +52,31 @@ void Assigment::generateSubTree(std::vector<Token>& tokenization, int& index)
 		throw std::runtime_error("Expected a semicolon after assignment");
 }
 
+void Statement::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	throw std::runtime_error("Cannot call generateSubTree for base class Statement");
+}
+
+void Expression::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+
+}
+
+void Expression2::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	
+}
+
+void Expression3::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	
+}
+
+void Expression4::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	
+}
+
 Node* generateAST(std::vector<Token>& tokenization)
 {
 	Node* root = getNodeInstanceByKeyword(tokenization[0]);
@@ -60,11 +85,12 @@ Node* generateAST(std::vector<Token>& tokenization)
 	return root;
 }
 
-static Node* getNodeInstanceByKeyword(Token token)
+static Statement* getNodeInstanceByKeyword(Token token)
 {
 	if (token.type != TokenType::Keyword)
 		throw std::runtime_error("Invalid token type");
 }
+
 void Epsilon::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
 	return;

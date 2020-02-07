@@ -85,9 +85,8 @@ std::string Expression3::generateCode(std::map<std::string, int>& variables, int
 	if(negation)
 	{
 		command += "lw $v0 4($sp)\n";
-		command += "neg $v0 $v0\n";
+		command += "sub $v0 $zero $v0\n";
 		command += "sw $v0 4($sp)\n";
-		command += "addi $sp $sp 4\n";
 	}
 
 	return command;

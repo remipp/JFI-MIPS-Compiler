@@ -13,12 +13,12 @@ Node::Node(std::string value)
 	: value{value}
 {}
 
-void Node::parseSubTree(std::vector<Token>& tokenization, int& index)
+void Node::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
-	throw std::runtime_error("Cannot call parseSubTree for base class Node");
+	throw std::runtime_error("Cannot call generateSubTree for base class Node");
 }
 
-void IntDeclaration::parseSubtree(std::vector<Token>& tokenization, int& index)
+void IntDeclaration::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
 	if (tokenization[++index].type != TokenType::Identifier)
 		throw std::runtime_error("Expected an identifier after int");
@@ -31,9 +31,12 @@ void IntDeclaration::parseSubtree(std::vector<Token>& tokenization, int& index)
 	}
 }
 
-Node* parseTokenization(std::vector<Token>& tokenization)
+Node* generateAST(std::vector<Token>& tokenization)
 {
-	return nullptr;
+	Node* root = getNodeInstanceByKeyword(tokenization[0]);
+	int index = 0;
+	root->generateSubTree(tokenization, index);
+	return root;
 }
 
 static Node* getNodeInstanceByKeyword(Token token)

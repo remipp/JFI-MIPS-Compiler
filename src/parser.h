@@ -5,4 +5,4 @@
 #include "token.h"
 #include "ast.h"
 
-Node* parseTokenization(std::vector<Token>& tokenization);
+Node* generateAST(std::vector<Token>& tokenization);

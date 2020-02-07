@@ -126,7 +126,7 @@ std::string Print::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	std::string command = expression->generateCode(variables, s);
 	command += "li $v0, 1\n";
-	command += "lw $a0, $(sp)\n";
+	command += "lw $a0, $sp\n";
 	command += "syscall\n";
 	return command;
 }

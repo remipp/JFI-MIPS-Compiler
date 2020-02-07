@@ -30,9 +30,9 @@ std::string Assignment::generateCode(std::map<std::string, int> variables, int s
 	int relLocation = variables[this->variable->name];
 	int offset = 4*s - relLocation;
 
-	this->expression->generateCode(variables, s);
+	std::string command = this->expression->generateCode(variables, s);;
 
-	std::string command = "lw $v0 4($sp)\n";
+	command += "lw $v0 4($sp)\n";
 	command += "sw $v0 " + std::to_string(offset) + "($sp)\n";
 
 	s--;

@@ -224,8 +224,7 @@ std::string While::printDebug(int depth) const
 	ret.resize(depth, ' ');
 	ret += "while {\n";
 
-	ret += a->printDebug(depth + 1);
-	ret += b->printDebug(depth + 1);
+	ret += expression->printDebug(depth + 1);
 	ret += body->printDebug(depth + 1);
 	ret += next->printDebug(depth + 1);
 
@@ -240,8 +239,7 @@ std::string If::printDebug(int depth) const
 	ret.resize(depth, ' ');
 	ret += "if {\n";
 
-	ret += a->printDebug(depth + 1);
-	ret += b->printDebug(depth + 1);
+	ret += expression->printDebug(depth + 1);
 	ret += body->printDebug(depth + 1);
 	ret += next->printDebug(depth + 1);
 

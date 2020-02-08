@@ -38,6 +38,9 @@ std::string Assignment::generateCode(std::map<std::string, int>& variables, int&
 
 	command += "lw $v0 4($sp)\n";
 	command += "sw $v0 " + std::to_string(offset) + "($sp)\n";
+	command += "addi $sp $sp -4\n";
+
+	s--;
 
 	command += this->next->generateCode(variables, s);
 
@@ -297,6 +300,8 @@ std::string Read::generateCode(std::map<std::string, int>& variables, int& s) {
 	std::string command =  "li $v0, 5\n";
 	command +=  "syscall\n";
 	command +=  "sw $v0, ($sp)\n";
+	command += "addi $sp $sp -4";
+	s++;
 	command += next->generateCode(variables, s);
 	return command;
 }

@@ -38,7 +38,7 @@ std::string Assignment::generateCode(std::map<std::string, int>& variables, int&
 
 	command += "lw $v0 4($sp)\n";
 	command += "sw $v0 " + std::to_string(offset) + "($sp)\n";
-	command += "addi $sp $sp -4\n";
+	command += "addi $sp $sp 4\n";
 
 	s--;
 
@@ -222,7 +222,7 @@ std::string BoolExpression3::generateCode(std::map<std::string, int>& variables,
  if(this->negation){
 	 command += "lw $v0 4($sp)\n";
 	 command += "neg $v0 $v0\n";
-	 command += "sw $v0 8($sp)\n";
+	 command += "sw $v0 4($sp)\n";
  }
 
  return command;

@@ -1,5 +1,6 @@
 #include "ast.h"
 #include <map>
+#include <iostream>
 
 static int finallyCounter = 0;
 static int resetCounter = 0;
@@ -84,9 +85,14 @@ std::string Expression::generateCode(std::map<std::string, int>& variables, int&
 
 	if(this->optional){
 		command += this->optional->generateCode(variables, s);
-		command += "lw $v0 4($sp)\n";
-		command += "lw $v1 8($sp)\n";
-		command += "add $v0 $v0 $v1\n";
+		command += "lw $v0 8($sp)\n";
+		command += "lw $v1 4($sp)\n";
+
+		if (isSubtraction)
+			command += "sub $v0 $v0 $v1\n";
+		else
+			command += "add $v0 $v0 $v1\n";
+
 		command += "sw $v0 8($sp)\n";
 		command += "addi $sp $sp 4\n";
 
@@ -102,8 +108,8 @@ std::string Expression2::generateCode(std::map<std::string, int>& variables, int
 
 	if(this->optional){
 		command += this->optional->generateCode(variables, s);
-		command += "lw $v0 4($sp)\n";
-		command += "lw $v1 8($sp)\n";
+		command += "lw $v0 8($sp)\n";
+		command += "lw $v1 4($sp)\n";
 		command += "mul $v0 $v0 $v1\n";
 		command += "sw $v0 8($sp)\n";
 		command += "addi $sp $sp 4\n";

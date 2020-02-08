@@ -74,6 +74,13 @@ void Expression::generateSubTree(std::vector<Token>& tokenization, int& index)
 	{
 		optional = new Expression();
 		optional->generateSubTree(tokenization, ++index);
+		isSubtraction = false;
+	}
+	else if (tokenization.at(index).s == "-")
+	{
+		optional = new Expression();
+		optional->generateSubTree(tokenization, ++index);
+		isSubtraction = true;
 	}
 }
 

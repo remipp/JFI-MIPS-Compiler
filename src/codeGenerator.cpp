@@ -31,15 +31,13 @@ std::string Assignment::generateCode(std::map<std::string, int>& variables, int&
 		throw std::runtime_error("Syntax error: " + this->variable->name + " not declared.");
 	}
 
+	std::string command = this->expression->generateCode(variables, s);
+
 	int relLocation = variables[this->variable->name];
 	int offset = 4*(s - relLocation);
 
-	std::string command = this->expression->generateCode(variables, s);;
-
 	command += "lw $v0 4($sp)\n";
 	command += "sw $v0 " + std::to_string(offset) + "($sp)\n";
-
-	s--;
 
 	command += this->next->generateCode(variables, s);
 

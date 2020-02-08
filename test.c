@@ -1,2 +1,13 @@
 int x;
-x = (2+3)*6;
+int y;
+y=1;
+x = x + y;
+print(x);
+x = x + y;
+print(x);
+x = x + y;
+print(x);
+x = x + y;
+print(x);
+x = x + y;
+print(x);

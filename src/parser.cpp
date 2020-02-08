@@ -327,6 +327,5 @@ void Read::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
 	if (tokenization.at(++index).s != "(" || tokenization.at(++index).s != ")")
 		throw std::runtime_error("Expected opening and closing bracket after print");
-	next = getNodeInstanceByKeyword(tokenization, ++index);
-	next->generateSubTree(tokenization, index);
+	++index;
 }

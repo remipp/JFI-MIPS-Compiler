@@ -281,8 +281,6 @@ std::string Read::printDebug(int depth) const
 	ret.resize(depth, ' ');
 	ret += "read {\n";
 
-	ret += next->printDebug(depth + 1);
-
 	ret.resize(ret.size() + depth, ' ');
 	ret += "}\n";
 	return ret;

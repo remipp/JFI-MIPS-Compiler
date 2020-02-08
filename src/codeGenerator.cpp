@@ -300,8 +300,8 @@ std::string Read::generateCode(std::map<std::string, int>& variables, int& s) {
 	std::string command =  "li $v0, 5\n";
 	command +=  "syscall\n";
 	command +=  "sw $v0, ($sp)\n";
-	command += "addi $sp $sp -4";
+	command += "addi $sp $sp -4\n";
 	s++;
-	command += next->generateCode(variables, s);
+	//command += next->generateCode(variables, s);
 	return command;
 }

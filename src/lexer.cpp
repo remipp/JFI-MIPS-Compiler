@@ -6,10 +6,10 @@
 
 Lexer::Lexer(std::string fileContent)
 {
-	std::regex rgx("([A-z0-9]+)|!=|[=<>]=?|[\\(\\)\\{\\}+*-;=]");
+	std::regex rgx("([A-z0-9]+)|!=|\\|\\||&&|[=<>]=?|[\\(\\)\\{\\}+*-;=]");
 	std::regex intConst("^\\d+$");
 	std::regex identifier("^[A-z][A-z0-9_]*$");
-	std::regex booleanOperator("^!=|[=<>]=?$");
+	std::regex booleanOperator("^\\|\\||&&|!=|[=<>]=?$");
 	std::regex special("^[=;,\\(\\)\\{\\}\\+*-]");
 	std::smatch m;
 	std::sregex_iterator it(fileContent.begin(), fileContent.end(), rgx), it_end;

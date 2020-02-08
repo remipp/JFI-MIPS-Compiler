@@ -79,6 +79,7 @@ class Expression2 : public Node
 public:
 	Expression3* next;
 	Expression2* optional;
+	bool isMultiplication;
 
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
@@ -256,6 +257,15 @@ class Exit : public Statement
 {
 	Statement* next;
 
+	void generateSubTree(std::vector<Token>& tokenization, int& index);
+
+	std::string printDebug(int depth) const;
+	std::string generateCode(std::map<std::string, int>& variables, int& s);
+};
+
+class Read : public Node
+{
+	Node* next;
 	void generateSubTree(std::vector<Token>& tokenization, int& index);
 
 	std::string printDebug(int depth) const;

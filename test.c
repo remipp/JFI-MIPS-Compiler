@@ -1,2 +1,7 @@
 int x;
-x = (2+3)*6;
+x = read();
+print(x*111);
+print(1337);
+print(x/10);
+exit();
+int y;

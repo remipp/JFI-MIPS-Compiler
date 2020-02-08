@@ -275,6 +275,19 @@ std::string Exit::printDebug(int depth) const
 	return ret;
 }
 
+std::string Read::printDebug(int depth) const
+{
+	std::string ret;
+	ret.resize(depth, ' ');
+	ret += "read {\n";
+
+	ret += next->printDebug(depth + 1);
+
+	ret.resize(ret.size() + depth, ' ');
+	ret += "}\n";
+	return ret;
+}
+
 std::ostream& operator<<(std::ostream& os, const Node& root)
 {
 	os << root.printDebug(0);

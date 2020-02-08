@@ -31,7 +31,7 @@ std::string Assignment::generateCode(std::map<std::string, int>& variables, int&
 	}
 
 	int relLocation = variables[this->variable->name];
-	int offset = 4*s - relLocation;
+	int offset = 4*(s - relLocation);
 
 	std::string command = this->expression->generateCode(variables, s);;
 
@@ -51,7 +51,7 @@ std::string If::generateCode(std::map<std::string, int>& variables, int& s)
 
 	command += expression->generateCode(variables, s);
 	command += "lw $v0 4($sp)\n";
-	command += "breq $v0 $zero finally" + std::to_string(finallyCounter) + "\n";
+	command += "beq $v0 $zero finally" + std::to_string(finallyCounter) + "\n";
 	command += body->generateCode(variables, s);
 	command += "finally" + std::to_string(finallyCounter) + ":\n";
 	command += next->generateCode(variables, s);
@@ -67,7 +67,7 @@ std::string While::generateCode(std::map<std::string, int>& variables, int& s)
 	command += "reset" + std::to_string(resetCounter) + ":\n";
 	command += expression->generateCode(variables, s);
 	command += "lw $v0 4($sp)\n";
-	command += "breq $v0 $zero finally" + std::to_string(finallyCounter) + "\n";
+	command += "beq $v0 $zero finally" + std::to_string(finallyCounter) + "\n";
 	command += body->generateCode(variables, s);
 	command += "j reset" + std::to_string(resetCounter) + "\n";
 	command += "finally" + std::to_string(finallyCounter) + ":\n";
@@ -146,6 +146,21 @@ std::string Number::generateCode(std::map<std::string, int>& variables, int& s)
 	return command;
 }
 
+std::string Variable::generateCode(std::map<std::string, int>& variables, int& s)
+{
+	int relLocation = variables[this->name];
+	int offset = 4*(s - relLocation);
+
+	std::string command;
+	command += "lw $v0 " + std::to_string(offset) + "($sp)\n";
+	command += "sw $v0 ($sp)\n";
+	command += "addi $sp $sp -4\n";
+
+	s++;
+
+	return command;
+}
+
 std::string BoolExpression::generateCode(std::map<std::string, int>& variables, int& s){
 	std::string command = this->next->generateCode(variables, s);
 
@@ -202,23 +217,23 @@ std::string Comparison::generateCode(std::map<std::string, int>& variables, int&
 	std::string command = this->a->generateCode(variables, s);
 	command += this->b->generateCode(variables, s);
 
-	command += "lw $v0 4($sp)\n";
-	command += "lw $v1 8($sp)\n";
+	command += "lw $t0 4($sp)\n";
+	command += "lw $t1 8($sp)\n";
 
 	if(this->comparator == "<"){
-		command += "sgt $v0 $v1 $v0\n";
-}else if(this->comparator == ">"){
-		command += "sgt $v0 $v0 $v1\n";
+		command += "sgt $v0 $t0 $t1\n";
+	}else if(this->comparator == ">"){
+		command += "sgt $v0 $t1 $t0\n";
 	}else if(this->comparator == "=="){
-		command += "seq $v0 $v0 $v1\n";
+		command += "seq $v0 $t1 $t0\n";
 	}else if(this->comparator == "!="){
-		command += "sne $v0 $v0 $v1\n";
+		command += "sne $v0 $t1 $t0\n";
 	}else if(this->comparator == "<="){
-		command += "sle $v0 $v0 $v1\n";
+		command += "sle $v0 $t1 $t0\n";
 	}else if(this->comparator == ">="){
-		command += "sge $v0 $v0 $v1\n";
+		command += "sge $v0 $t1 $t0\n";
 	}else{
-		command += "li $v0 0";
+		command += "li $v0 0\n";
 	}
 
 	command += "sw $v0 8($sp)\n";

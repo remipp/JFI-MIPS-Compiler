@@ -187,7 +187,7 @@ void Comparison::generateSubTree(std::vector<Token>& tokenization, int& index)
 	a = new Expression();
 	a->generateSubTree(tokenization, index);
 
-	if (tokenization.at(++index).type != TokenType::BooleanOperator)
+	if (tokenization.at(index).type != TokenType::BooleanOperator)
 		throw std::runtime_error("Expected a boolean operator");
 	comparator = tokenization.at(index).s;
 
@@ -212,10 +212,10 @@ void While::generateSubTree(std::vector<Token>& tokenization, int& index)
 	body = getNodeInstanceByKeyword(tokenization, ++index);
 	body->generateSubTree(tokenization, index);
 
-	if (tokenization.at(index).s != "}")
+	if (tokenization.at(index++).s != "}")
 		throw std::runtime_error("Expected closing bracket } after while block");
 
-	next = getNodeInstanceByKeyword(tokenization, ++index);
+	next = getNodeInstanceByKeyword(tokenization, index);
 	next->generateSubTree(tokenization, index);
 }
 
@@ -266,7 +266,7 @@ static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int
 		return new Print();
 	else if (tokenization.at(index).s == "exit")
 		return new Exit();
-	else if (tokenization.at(index + 1).s == "=")
+	else if (index < tokenization.size() - 1 && tokenization.at(index + 1).s == "=")
 	{
 		if (tokenization.at(index + 2).type == TokenType::Keyword)
 		{

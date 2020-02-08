@@ -1,8 +1,11 @@
 #pragma once
-#include "token.h"
+
 #include <string>
 #include <map>
 #include <vector>
+
+#include "token.h"
+
 class Lexer{
 private:
 	std::map<std::string, TokenType> typeMap {
@@ -10,6 +13,7 @@ private:
 		{"while", TokenType::Keyword},
 		{"if", TokenType::Keyword}
 	};
+
 public:
 	Lexer(std::string fileContent);
 	std::vector<Token> tokens;

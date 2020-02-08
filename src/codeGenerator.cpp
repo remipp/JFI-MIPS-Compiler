@@ -2,16 +2,17 @@
 #include <map>
 #include <iostream>
 
+//Counter variables for unique label creation (eg. reset3 or finally4)
 static int finallyCounter = 0;
 static int resetCounter = 0;
 
-std::string IntDeclaration::generateCode(std::map<std::string, int>& variables, int& s)
+std::string IntDeclaration::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	if(variables.find(this->variable->name) != variables.end())
 		throw std::runtime_error("Syntax error: " + this->variable->name + " is already taken.");
 
-	variables.insert(make_pair(this->variable->name, s));
-	s++;
+	variables.insert(make_pair(this->variable->name, stackCounter));
+	stackCounter++;
 
 	std::string command = "# Int Declaration: int " + this->variable->name + ";\n";
 	command += "li $v0 0\n";
@@ -19,20 +20,20 @@ std::string IntDeclaration::generateCode(std::map<std::string, int>& variables, 
 	command += "addi $sp $sp -4\n";
 	command += "\n";
 
-	command += this->next->generateCode(variables, s);
+	command += this->next->generateCode(variables, stackCounter);
 
 	return command;
 }
 
-std::string Assignment::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Assignment::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	if(variables.find(this->variable->name) == variables.end())
 		throw std::runtime_error("Syntax error: " + this->variable->name + " not declared.");
 
-	std::string command = this->expression->generateCode(variables, s);
+	std::string command = this->expression->generateCode(variables, stackCounter);
 
 	int relLocation = variables[this->variable->name];
-	int offset = 4 * (s - relLocation);
+	int offset = 4 * (stackCounter - relLocation);
 
 	command += "# Assign: " + this->variable->name + ";\n";
 	command += "lw $v0 4($sp)\n";
@@ -40,39 +41,39 @@ std::string Assignment::generateCode(std::map<std::string, int>& variables, int&
 	command += "addi $sp $sp 4\n";
 	command += "\n";
 
-	s--;
+	stackCounter--;
 
-	command += this->next->generateCode(variables, s);
+	command += this->next->generateCode(variables, stackCounter);
 
 	return command;
 }
 
-std::string If::generateCode(std::map<std::string, int>& variables, int& s)
+std::string If::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
 
 	//Expression evaluation and conditional jump
-	command += expression->generateCode(variables, s);
+	command += expression->generateCode(variables, stackCounter);
 	command += "# If\n";
 	command += "lw $v0 4($sp)\n";
 	command += "addi $sp $sp 4\n";
-	s--;
+	stackCounter--;
 	command += "beq $v0 $zero finally" + std::to_string(finallyCounter) + "\n";
 	command += "\n";
 
 	//Body of if directive
-	command += body->generateCode(variables, s);
+	command += body->generateCode(variables, stackCounter);
 	command += "finally" + std::to_string(finallyCounter) + ":\n";
 	command += "\n";
 
 	//Next statement
-	command += next->generateCode(variables, s);
+	command += next->generateCode(variables, stackCounter);
 
 	finallyCounter++;
 	return command;
 }
 
-std::string While::generateCode(std::map<std::string, int>& variables, int& s)
+std::string While::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
 
@@ -80,16 +81,16 @@ std::string While::generateCode(std::map<std::string, int>& variables, int& s)
 	command += "reset" + std::to_string(resetCounter) + ":\n";
 
 	//Expression evaluation and conditional jump
-	command += expression->generateCode(variables, s);
+	command += expression->generateCode(variables, stackCounter);
 	command += "# While\n";
 	command += "lw $v0 4($sp)\n";
 	command += "addi $sp $sp 4\n";
-	s--;
+	stackCounter--;
 	command += "beq $v0 $zero finally" + std::to_string(finallyCounter) + "\n";
 	command += "\n";
 
 	//Body of while directive
-	command += body->generateCode(variables, s);
+	command += body->generateCode(variables, stackCounter);
 
 	//End of while body with jump to top
 	command += "j reset" + std::to_string(resetCounter) + "\n";
@@ -97,21 +98,21 @@ std::string While::generateCode(std::map<std::string, int>& variables, int& s)
 
 	//Following statement
 	command += "\n";
-	command += next->generateCode(variables, s);
+	command += next->generateCode(variables, stackCounter);
 
 	finallyCounter++;
 	resetCounter++;
 	return command;
 }
 
-std::string Expression::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Expression::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
-	command += this->next->generateCode(variables, s);
+	command += this->next->generateCode(variables, stackCounter);
 
 	if(this->optional)
 	{
-		command += this->optional->generateCode(variables, s);
+		command += this->optional->generateCode(variables, stackCounter);
 		command += "# Addition or Subtraction\n";
 		command += "lw $v0 8($sp)\n";
 		command += "lw $v1 4($sp)\n";
@@ -125,20 +126,20 @@ std::string Expression::generateCode(std::map<std::string, int>& variables, int&
 		command += "addi $sp $sp 4\n";
 		command += "\n";
 
-		s--;
+		stackCounter--;
 	}
 
 	return command;
 }
 
-std::string Expression2::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Expression2::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
-	command += this->next->generateCode(variables, s);
+	command += this->next->generateCode(variables, stackCounter);
 
 	if(this->optional)
 	{
-		command += this->optional->generateCode(variables, s);
+		command += this->optional->generateCode(variables, stackCounter);
 		command += "# Multiplication or Division\n";
 		command += "lw $v0 8($sp)\n";
 		command += "lw $v1 4($sp)\n";
@@ -150,17 +151,18 @@ std::string Expression2::generateCode(std::map<std::string, int>& variables, int
 
 		command += "sw $v0 8($sp)\n";
 		command += "addi $sp $sp 4\n";
+		command += "\n";
 
-		s--;
+		stackCounter--;
 	}
 
 	return command;
 }
 
-std::string Expression3::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Expression3::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
-	command += this->next->generateCode(variables, s);
+	command += this->next->generateCode(variables, stackCounter);
 
 	if(negation)
 	{
@@ -174,15 +176,15 @@ std::string Expression3::generateCode(std::map<std::string, int>& variables, int
 	return command;
 }
 
-std::string Expression4::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Expression4::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
-	command += this->next->generateCode(variables, s);
+	command += this->next->generateCode(variables, stackCounter);
 
 	return command;
 }
 
-std::string Number::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Number::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
 	command += "# Number\n";
@@ -191,15 +193,15 @@ std::string Number::generateCode(std::map<std::string, int>& variables, int& s)
 	command += "addi $sp $sp -4\n";
 	command += "\n";
 
-	s++;
+	stackCounter++;
 
 	return command;
 }
 
-std::string Variable::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Variable::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	int relLocation = variables[this->name];
-	int offset = 4 * (s - relLocation);
+	int offset = 4 * (stackCounter - relLocation);
 
 	std::string command;
 	command += "# Variable " + this->name + "\n";
@@ -208,18 +210,32 @@ std::string Variable::generateCode(std::map<std::string, int>& variables, int& s
 	command += "addi $sp $sp -4\n";
 	command += "\n";
 
-	s++;
+	stackCounter++;
 
 	return command;
 }
 
-std::string BoolExpression::generateCode(std::map<std::string, int>& variables, int& s){
+std::string Boolean::generateCode(std::map<std::string, int>& variables, int& stackCounter)
+{
 	std::string command;
-	command += this->next->generateCode(variables, s);
+	command += "# Boolean\n";
+	command += "li $v0 " + std::to_string((int)value) + "\n";
+	command += "sw $v0 ($sp)\n";
+	command += "addi $sp $sp -4\n";
+	command += "\n";
+
+	stackCounter++;
+
+	return command;
+}
+
+std::string BoolExpression::generateCode(std::map<std::string, int>& variables, int& stackCounter){
+	std::string command;
+	command += this->next->generateCode(variables, stackCounter);
 
 	if(this->optional)
 	{
-		command += this->optional->generateCode(variables, s);
+		command += this->optional->generateCode(variables, stackCounter);
 		command += "# Boolean or\n";
 		command += "lw $v0 8($sp)\n";
 		command += "lw $v1 4($sp)\n";
@@ -228,19 +244,19 @@ std::string BoolExpression::generateCode(std::map<std::string, int>& variables, 
 		command += "addi $sp $sp 4\n";
 		command += "\n";
 
-		s--;
+		stackCounter--;
 	}
 
 	return command;
 }
 
-std::string BoolExpression2::generateCode(std::map<std::string, int>& variables, int& s){
+std::string BoolExpression2::generateCode(std::map<std::string, int>& variables, int& stackCounter){
 	std::string command;
-	command += this->next->generateCode(variables, s);
+	command += this->next->generateCode(variables, stackCounter);
 
 	if(this->optional)
 	{
-		command += this->optional->generateCode(variables, s);
+		command += this->optional->generateCode(variables, stackCounter);
 		command += "# Boolean and\n";
 		command += "lw $v0 8($sp)\n";
 		command += "lw $v1 4($sp)\n";
@@ -249,15 +265,15 @@ std::string BoolExpression2::generateCode(std::map<std::string, int>& variables,
 		command += "addi $sp $sp 4\n";
 		command += "\n";
 
-		s--;
+		stackCounter--;
 	}
 
 	return command;
 }
 
-std::string BoolExpression3::generateCode(std::map<std::string, int>& variables, int& s){
+std::string BoolExpression3::generateCode(std::map<std::string, int>& variables, int& stackCounter){
 	std::string command;
-	command += this->next->generateCode(variables, s);
+	command += this->next->generateCode(variables, stackCounter);
 
 	if(this->negation)
 	{
@@ -271,16 +287,16 @@ std::string BoolExpression3::generateCode(std::map<std::string, int>& variables,
 	return command;
 }
 
-std::string BoolExpression4::generateCode(std::map<std::string, int>& variables, int& s){
-	std::string command = this->next->generateCode(variables, s);
+std::string BoolExpression4::generateCode(std::map<std::string, int>& variables, int& stackCounter){
+	std::string command = this->next->generateCode(variables, stackCounter);
 
 	return command;
 }
 
-std::string Comparison::generateCode(std::map<std::string, int>& variables, int& s){
+std::string Comparison::generateCode(std::map<std::string, int>& variables, int& stackCounter){
 	std::string command;
-	command += this->a->generateCode(variables, s);
-	command += this->b->generateCode(variables, s);
+	command += this->a->generateCode(variables, stackCounter);
+	command += this->b->generateCode(variables, stackCounter);
 
 	//Load values
 	command += "# Expression comparison\n";
@@ -308,28 +324,28 @@ std::string Comparison::generateCode(std::map<std::string, int>& variables, int&
 	command += "addi $sp $sp 4\n";
 	command += "\n";
 
-	s--;
+	stackCounter--;
 
 	return command;
 }
 
 
-std::string Epsilon::generateCode(std::map<std::string, int>& variables, int& s){
+std::string Epsilon::generateCode(std::map<std::string, int>& variables, int& stackCounter){
 	return "";
 }
 
-std::string Node::generateCode(std::map<std::string, int>& variables, int& s){
+std::string Node::generateCode(std::map<std::string, int>& variables, int& stackCounter){
 	return "";
 }
 
-std::string Statement::generateCode(std::map<std::string, int>& variables, int& s){
+std::string Statement::generateCode(std::map<std::string, int>& variables, int& stackCounter){
 	return "";
 }
 
-std::string Print::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Print::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
-	command += expression->generateCode(variables, s);
+	command += expression->generateCode(variables, stackCounter);
 	command += "# Print syscall\n";
 	command += "li $v0 1\n";
 	command += "lw $a0 4($sp)\n";
@@ -340,26 +356,26 @@ std::string Print::generateCode(std::map<std::string, int>& variables, int& s)
 	command += "li $a0 \'\\n\'\n";
 	command += "syscall\n";
 	command += "addi $sp $sp 4\n";
-	s--;
+	stackCounter--;
 	command += "\n";
 
 	//Next statement
-	command += next->generateCode(variables, s);
+	command += next->generateCode(variables, stackCounter);
 	return command;
 }
 
-std::string Exit::generateCode(std::map<std::string, int>& variables, int& s)
+std::string Exit::generateCode(std::map<std::string, int>& variables, int& stackCounter)
 {
 	std::string command;
 	command += "# Exit syscall\n";
 	command += "li $v0, 10\n";
 	command += "syscall\n";
 	command += "\n";
-	command += next->generateCode(variables, s);
+	command += next->generateCode(variables, stackCounter);
 	return command;
 }
 
-std::string Read::generateCode(std::map<std::string, int>& variables, int& s) {
+std::string Read::generateCode(std::map<std::string, int>& variables, int& stackCounter) {
 	std::string command;
 	command += "# Read syscall\n";
 	command += "li $v0, 5\n";
@@ -367,6 +383,6 @@ std::string Read::generateCode(std::map<std::string, int>& variables, int& s) {
 	command += "sw $v0, ($sp)\n";
 	command += "addi $sp $sp -4\n";
 	command += "\n";
-	s++;
+	stackCounter++;
 	return command;
 }

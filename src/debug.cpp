@@ -61,7 +61,11 @@ std::string Expression3::printDebug(int depth) const
 	ret += "e3 {\n";
 	
 	if (negation)
-		ret += '-';
+	{
+		ret.resize(ret.size() + depth, ' ');
+		ret += "negate\n";
+	}
+
 	ret += next->printDebug(depth + 1);
 
 	ret.resize(ret.size() + depth, ' ');
@@ -106,6 +110,7 @@ std::string Comparison::printDebug(int depth) const
 	ret += "comp {\n";
 
 	ret += a->printDebug(depth + 1);
+	ret.resize(ret.size() + depth, ' ');
 	ret += comparator + "\n";
 	ret += b->printDebug(depth + 1);
 
@@ -134,7 +139,11 @@ std::string BoolExpression3::printDebug(int depth) const
 	ret += "b3 {\n";
 	
 	if (negation)
-		ret += '!';
+	{
+		ret.resize(ret.size() + depth, ' ');
+		ret += "negate\n";
+	}
+
 	ret += next->printDebug(depth + 1);
 
 	ret.resize(ret.size() + depth, ' ');
@@ -289,5 +298,46 @@ std::string Read::printDebug(int depth) const
 std::ostream& operator<<(std::ostream& os, const Node& root)
 {
 	os << root.printDebug(0);
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const TokenType& type)
+{
+	std::string ret;
+
+	switch (type)
+	{
+		case TokenType::Identifier:
+			ret = "Identifier       ";
+			break;
+
+		case TokenType::Keyword:
+			ret = "Keyword          ";
+			break;
+
+		case TokenType::BooleanOperator:
+			ret = "Boolean operator ";
+			break;
+
+		case TokenType::Constant:
+			ret = "Constant         ";
+			break;
+
+		case TokenType::SpecialSymbol:
+			ret = "Special symbol   ";
+			break;
+	
+		default:
+			throw std::runtime_error("Invalid token type");
+			break;
+	}
+
+	os << ret;
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const Token& token)
+{
+	os << token.type << token.s;
 	return os;
 }

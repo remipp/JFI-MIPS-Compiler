@@ -1,6 +1,9 @@
 #pragma once
+
 #include <string>
-enum class TokenType {
+
+enum class TokenType
+{
 	Keyword,
 	Identifier,
 	Constant,

@@ -1,22 +1,8 @@
-int x;
-<<<<<<< HEAD
-int y;
-y=1;
-x = x + y;
-print(x);
-x = x + y;
-print(x);
-x = x + y;
-print(x);
-x = x + y;
-print(x);
-x = x + y;
-print(x);
-=======
-x = read();
-print(x*111);
-print(1337);
-print(x/10);
-exit();
-int y;
->>>>>>> 681ea6d8e49ea676c94e809f07a57a59d41a8f68
+int sum;
+int i;
+i=50;
+sum = 1;
+while(i>0){
+sum = sum* i;
+i = i - 1;
+}

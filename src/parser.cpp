@@ -131,6 +131,7 @@ void Expression4::generateSubTree(std::vector<Token>& tokenization, int& index)
 	}
 	else if (tokenization.at(index).s == "read")
 	{
+		std::cout << tokenization[index].s;
 		next = new Read();
 		next->generateSubTree(tokenization, index);
 	}
@@ -327,5 +328,6 @@ void Read::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
 	if (tokenization.at(++index).s != "(" || tokenization.at(++index).s != ")")
 		throw std::runtime_error("Expected opening and closing bracket after print");
-	++index;
+
+	index++;
 }

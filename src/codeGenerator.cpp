@@ -105,14 +105,28 @@ std::string Expression2::generateCode(std::map<std::string, int>& variables, int
 	std::string command = this->next->generateCode(variables, s);
 
 	if(this->optional){
-		command += this->optional->generateCode(variables, s);
-		command += "lw $v0 8($sp)\n";
-		command += "lw $v1 4($sp)\n";
-		command += "mul $v0 $v0 $v1\n";
-		command += "sw $v0 8($sp)\n";
-		command += "addi $sp $sp 4\n";
+		if (this->isMultiplication)
+		{
+			command += this->optional->generateCode(variables, s);
+			command += "lw $v0 4($sp)\n";
+			command += "lw $v1 8($sp)\n";
+			command += "mul $v0 $v0 $v1\n";
+			command += "sw $v0 8($sp)\n";
+			command += "addi $sp $sp 4\n";
 
-		s--;
+			s--;
+		}
+		else
+		{
+			command += this->optional->generateCode(variables, s);
+			command += "lw $v1 4($sp)\n";
+			command += "lw $v0 8($sp)\n";
+			command += "div $v0 $v0 $v1\n";
+			command += "sw $v0 8($sp)\n";
+			command += "addi $sp $sp 4\n";
+
+			s--;
+		}
 	}
 
 	return command;
@@ -275,6 +289,14 @@ std::string Exit::generateCode(std::map<std::string, int>& variables, int& s)
 {
 	std::string command = "li $v0, 10\n";
 	command += "syscall\n";
+	command += next->generateCode(variables, s);
+	return command;
+}
+
+std::string Read::generateCode(std::map<std::string, int>& variables, int& s) {
+	std::string command =  "li $v0, 5\n";
+	command +=  "syscall\n";
+	command +=  "sw $v0, ($sp)\n";
 	command += next->generateCode(variables, s);
 	return command;
 }

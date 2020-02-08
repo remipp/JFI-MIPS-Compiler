@@ -91,6 +91,12 @@ void Expression2::generateSubTree(std::vector<Token>& tokenization, int& index)
 
 	if (tokenization.at(index).s == "*")
 	{
+		isMultiplication = true;
+		optional = new Expression2();
+		optional->generateSubTree(tokenization, ++index);
+	}
+	else if (tokenization.at(index).s == "/")
+	{
 		optional = new Expression2();
 		optional->generateSubTree(tokenization, ++index);
 	}
@@ -121,6 +127,11 @@ void Expression4::generateSubTree(std::vector<Token>& tokenization, int& index)
 	}
 	else if (tokenization.at(index).type == TokenType::Constant) {
 		next = new Number();
+		next->generateSubTree(tokenization, index);
+	}
+	else if (tokenization.at(index).s == "read")
+	{
+		next = new Read();
 		next->generateSubTree(tokenization, index);
 	}
 	else
@@ -275,14 +286,7 @@ static Statement* getNodeInstanceByKeyword(std::vector<Token>& tokenization, int
 		return new Exit();
 	else if (index < tokenization.size() - 1 && tokenization.at(index + 1).s == "=")
 	{
-		if (tokenization.at(index + 2).type == TokenType::Keyword)
-		{
-			// TODO syscall?
-		}
-		else
-		{
-			return new Assignment();
-		}
+		return new Assignment();
 	}
 	else
 		return new Statement();
@@ -312,9 +316,17 @@ void Print::generateSubTree(std::vector<Token>& tokenization, int& index)
 void Exit::generateSubTree(std::vector<Token>& tokenization, int& index)
 {
 	if (tokenization.at(++index).s != "(" || tokenization.at(++index).s != ")")
-		throw std::runtime_error("Expected opening and closing bracket after print");
+		throw std::runtime_error("Expected opening and closing bracket after exit");
 	if (tokenization.at(++index).s != ";")
 		throw std::runtime_error("Expected semicolon");
+	next = getNodeInstanceByKeyword(tokenization, ++index);
+	next->generateSubTree(tokenization, index);
+}
+
+void Read::generateSubTree(std::vector<Token>& tokenization, int& index)
+{
+	if (tokenization.at(++index).s != "(" || tokenization.at(++index).s != ")")
+		throw std::runtime_error("Expected opening and closing bracket after print");
 	next = getNodeInstanceByKeyword(tokenization, ++index);
 	next->generateSubTree(tokenization, index);
 }

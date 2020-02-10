@@ -1,5 +1,5 @@
 # JFI2020 MIPS Compiler
-A simple compiler that compiles C-Like Code into MIPS Assembly. It started as a 2-Day project in a group of three after an introductory talk on compiler theory by Philip Lukert at Jugendforum Informatik 2020.
+A simple compiler that compiles C-Like Code into MIPS Assembly. It started as a 3-Day project in a group of three after an introductory talk on compiler theory by Philip Lukert at Jugendforum Informatik 2020.
 
 ## Features
  - Int Datatype
@@ -59,7 +59,7 @@ Furthermore each class saves pointers to needed expressions or states. For examp
 ### Compile process
 The compile process is divided into three steps: the lexer, the parser and the generator
 
-#### lexer
+#### Lexer
 The lexer converts the source file into an array that the parser can understand. It removes all whitespace and tokenizes the syntax-elements into 5 groups:
 - Keyword: Datatypes such as `int` and control flow statements such as `if` and `while`
 - Identifier: Variable names
